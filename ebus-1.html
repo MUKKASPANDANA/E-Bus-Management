@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebus Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">🚌 Ebus Management System</div>
+        <div class="nav-buttons">
+            <div id="guestNav">
+                <button class="btn btn-primary" onclick="showPage('home')">Home</button>
+                <button class="btn btn-secondary" onclick="showPage('login')">Login</button>
+                <button class="btn btn-secondary" onclick="showPage('register')">Register</button>
+                <button class="btn btn-secondary" onclick="showPage('search')">Search Bus</button>
+            </div>
+            <div id="loggedInNav" class="logged-in-nav hidden">
+                <span id="welcomeMsg" class="welcome-msg"></span>
+                <button class="btn btn-primary" onclick="showPage('dashboard')">Dashboard</button>
+                <button class="btn btn-secondary" onclick="showPage('contact')">Contact</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Home Page -->
+        <div id="homePage" class="page active">
+            <h1 class="page-title">Welcome to Ebus Management System</h1>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>🚌 Real-Time Tracking</h3>
+                    <p>Track buses in real-time and get accurate arrival predictions based on current location and traffic conditions.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>⏰ Smart Predictions</h3>
+                    <p>Advanced prediction algorithms analyze historical data and current conditions to provide reliable arrival times.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>📱 Easy Management</h3>
+                    <p>Simplified interface for drivers to manage bus information and for passengers to find their routes.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>🗺️ Route Optimization</h3>
+                    <p>Optimize routes based on traffic patterns and passenger demand to improve overall efficiency.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="loginPage" class="page">
+            <h2 class="page-title">Login to Your Account</h2>
+            <div id="loginAlert" class="alert"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="userType">Login As</label>
+                    <select id="userType" class="form-control" required>
+                        <option value="">Select User Type</option>
+                        <option value="admin">Admin</option>
+                        <option value="driver">Driver/Travel Agency</option>
+                        <option value="user">Passenger</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <span id="loginSpinner" class="loading hidden"></span>
+                    Login
+                </button>
+            </form>
+        </div>
+
+        <!-- Register Page -->
+        <div id="registerPage" class="page">
+            <h2 class="page-title">Create New Account</h2>
+            <div id="registerAlert" class="alert"></div>
+            <form id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" class="form-control" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="form-control" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="registerUserType">Register As</label>
+                    <select id="registerUserType" class="form-control" required>
+                        <option value="">Select User Type</option>
+                        <option value="admin">Admin</option>
+                        <option value="driver">Driver/Travel Agency</option>
+                        <option value="user">Passenger</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" required>
+                </div>
+                <!-- Admin verification field -->
+                <div class="form-group" id="adminVerificationField" style="display: none;">
+                    <label class="form-label" for="adminCode">Admin Verification Code</label>
+                    <input type="text" id="adminCode" class="form-control" placeholder="Enter admin code">
+                    <small style="color: #666; font-size: 0.9rem;">Contact system administrator for the verification code</small>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <span id="registerSpinner" class="loading hidden"></span>
+                    Register
+                </button>
+            </form>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage" class="page">
+            <h2 class="page-title">Dashboard</h2>
+            
+            <!-- Admin Dashboard -->
+            <div id="adminDashboard" class="hidden">
+                <div class="user-info">
+                    <h3>Admin Dashboard</h3>
+                    <p>Manage the entire Ebus system, create driver accounts, and monitor operations.</p>
+                </div>
+                               
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>👥 Create Driver Account</h3>
+                        <button class="btn btn-primary" onclick="showCreateDriverForm()">Create New Driver</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🚌 Total Buses</h3>
+                        <p id="totalBuses" class="stats-display">Loading...</p>
+                        <small class="stats-label">Registered Buses</small>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>👨‍✈️ Total Drivers</h3>
+                        <p id="totalDrivers" class="stats-display">Loading...</p>
+                        <small class="stats-label">Active Drivers</small>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>👤 Total Users</h3>
+                        <p id="totalUsers" class="stats-display">Loading...</p>
+                        <small class="stats-label">Registered Passengers</small>
+                    </div>
+                </div>
+
+                <!-- Create Driver Form -->
+                <div id="createDriverForm" class="hidden" style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 15px;">
+                    <h3>Create Driver/Travel Account</h3>
+                    <div id="createDriverAlert" class="alert"></div>
+                    <form id="driverCreationForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Driver Name</label>
+                                <input type="text" id="driverName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="driverEmail" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="driverPassword" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" id="driverPhone" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">License Number</label>
+                            <input type="text" id="licenseNumber" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Driver Account</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideCreateDriverForm()">Cancel</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Driver Dashboard -->
+            <div id="driverDashboard" class="hidden">
+                <div class="user-info">
+                    <h3>Driver Dashboard</h3>
+                    <p>Manage your bus information, routes, and contact details.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>🚌 Post Bus Information</h3>
+                        <button class="btn btn-primary" onclick="showBusForm()">Add Bus Details</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🚐 Post Bus Type</h3>
+                        <button class="btn btn-primary" onclick="showBusTypeForm()">Add Bus Type</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>📞 Update Contact</h3>
+                        <button class="btn btn-primary" onclick="showContactForm()">Update Contact Info</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>📊 My Buses</h3>
+                        <p id="myBusesCount">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Bus Information Form -->
+                <div id="busInfoForm" class="hidden" style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 15px;">
+                    <h3>Add Bus Information</h3>
+                    <div id="busInfoAlert" class="alert"></div>
+                    <form id="busDetailsForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Bus Number</label>
+                                <input type="text" id="busNumber" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Route</label>
+                                <input type="text" id="busRoute" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Source</label>
+                                <input type="text" id="busSource" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Destination</label>
+                                <input type="text" id="busDestination" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Departure Time</label>
+                                <input type="time" id="departureTime" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Arrival Time</label>
+                                <input type="time" id="arrivalTime" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Fare (₹)</label>
+                                <input type="number" id="busFare" class="form-control" required min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Capacity</label>
+                                <input type="number" id="busCapacity" class="form-control" required min="1">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Bus Information</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideBusForm()">Cancel</button>
+                    </form>
+                </div>
+
+                <!-- Bus Type Form -->
+                <div id="busTypeForm" class="hidden" style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 15px;">
+                    <h3>Add Bus Type Information</h3>
+                    <div id="busTypeAlert" class="alert"></div>
+                    <form id="busTypeDetailsForm">
+                        <div class="form-group">
+                            <label class="form-label">Bus Type</label>
+                            <select id="busTypeSelect" class="form-control" required>
+                                <option value="">Select Bus Type</option>
+                                <option value="ac">AC Bus</option>
+                                <option value="non-ac">Non-AC Bus</option>
+                                <option value="sleeper">Sleeper Bus</option>
+                                <option value="semi-sleeper">Semi-Sleeper Bus</option>
+                                <option value="volvo">Volvo Bus</option>
+                                <option value="ordinary">Ordinary Bus</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Amenities</label>
+                            <textarea id="amenities" class="form-control" rows="3" placeholder="WiFi, Charging Point, Entertainment System, etc."></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Fuel Type</label>
+                                <select id="fuelType" class="form-control" required>
+                                    <option value="">Select Fuel Type</option>
+                                    <option value="diesel">Diesel</option>
+                                    <option value="cng">CNG</option>
+                                    <option value="electric">Electric</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Manufacturing Year</label>
+                                <input type="number" id="manufacturingYear" class="form-control" min="2000" max="2024" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Bus Type</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideBusTypeForm()">Cancel</button>
+                    </form>
+                </div>
+
+                <!-- Contact Form -->
+                <div id="contactUpdateForm" class="hidden" style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 15px;">
+                    <h3>Update Contact Information</h3>
+                    <div id="contactAlert" class="alert"></div>
+                    <form id="contactDetailsForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Primary Phone</label>
+                                <input type="tel" id="primaryPhone" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Secondary Phone</label>
+                                <input type="tel" id="secondaryPhone" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <textarea id="address" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" id="city" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <input type="text" id="state" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Emergency Contact</label>
+                            <input type="tel" id="emergencyContact" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Contact Info</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideContactForm()">Cancel</button>
+                    </form>
+                </div>
+
+                <!-- My Buses List -->
+                <div id="myBusesList" style="margin-top: 2rem;">
+                    <h3>My Buses</h3>
+                    <div id="busesContainer" class="bus-grid">
+                        <!-- Buses will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Dashboard -->
+            <div id="userDashboard" class="hidden">
+                <div class="user-info">
+                    <h3>Passenger Dashboard</h3>
+                    <p>Search for buses, view schedules, and track your journeys.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>🔍 Search Buses</h3>
+                        <button class="btn btn-primary" onclick="showPage('search')">Search Bus Routes</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>📅 My Bookings</h3>
+                        <p>View your booking history and upcoming journeys.</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>⭐ Rate & Review</h3>
+                        <p>Share your experience and help improve services.</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>🎫 Quick Book</h3>
+                        <p>Book your frequently traveled routes quickly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Page -->
+        <div id="searchPage" class="page">
+            <h2 class="page-title">Search Bus Location</h2>
+            
+            <div class="search-container">
+                <form id="searchForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="searchSource">From (Source)</label>
+                            <input type="text" id="searchSource" class="form-control" placeholder="Enter source location" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="searchDestination">To (Destination)</label>
+                            <input type="text" id="searchDestination" class="form-control" placeholder="Enter destination" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="travelDate">Travel Date</label>
+                            <input type="date" id="travelDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="travelTime">Preferred Time</label>
+                            <input type="time" id="travelTime" class="form-control">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <span id="searchSpinner" class="loading hidden"></span>
+                        Search Buses
+                    </button>
+                </form>
+            </div>
+
+            <div id="searchResults" class="search-results">
+                <div id="busResults" class="bus-grid">
+                    <!-- Search results will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contactPage" class="page">
+            <h2 class="page-title">Contact Us</h2>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>📧 Email Support</h3>
+                    <p>support@ebusmanagement.com</p>
+                    <p>For technical issues and general inquiries</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>📞 Phone Support</h3>
+                    <p>+91-9876543210</p>
+                    <p>Available 24/7 for emergency assistance</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>🏢 Head Office</h3>
+                    <p>123 Transport Hub, Tech City</p>
+                    <p>Hyderabad, Telangana - 500001</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>💬 Live Chat</h3>
+                    <p>Available on website</p>
+                    <p>Mon-Fri: 9:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem; background: white; padding: 2rem; border-radius: 15px;">
+                <h3>Send us a Message</h3>
+                <div id="contactFormAlert" class="alert"></div>
+                <form id="contactMessageForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" id="contactName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" id="contactEmail" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" id="contactSubject" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea id="contactMessage" class="form-control" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-firestore-compat.min.js"></script>
+
+    <!-- Main JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
