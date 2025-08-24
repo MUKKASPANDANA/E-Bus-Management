@@ -1,12 +1,12 @@
 // Firebase Configuration - Replace with your actual config
 const firebaseConfig = {
-    apiKey: "AIzaSyDOrMC3Oil7rkZE53KGhwTuKZr0H8JUEo8",
-    authDomain: "e-bus-management-80773.firebaseapp.com",
-    projectId: "e-bus-management-80773",
-    storageBucket: "e-bus-management-80773.firebasestorage.app",
-    messagingSenderId: "447074597712",
-    appId: "1:447074597712:web:849483b9c210a5ca570a55",
-    measurementId: "G-GCFHEJZ13G"
+    apiKey: "YOUR_API_KEY_HERE",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID",
+    measurementId: "YOUR_MEASUREMENT_ID"
 };
 
 // Initialize Firebase
@@ -1052,4 +1052,5 @@ window.ebusDebug = {
             console.error('Database check failed:', error);
         }
     }
+
 };
